@@ -1,14 +1,19 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include <pthread.h>
 // To determine the accessibility status of each channel
 struct type_channel_list{
     char *channel_name;
+    pthread_t channel_thread;
     int enabled;
 };
 struct type_channel_list *CHANNEL_LIST = NULL;
 // The length of the channel list should be defined by the developer. 
 int CHANNEL_LIST_LENGTH;
+
+// An array to store channels' threads.
+int RUNNING_CHANNEL = 0;
 
 // Initiate the channel list. First argument is the channels' names. Second argument
 // is the length of the channel list (How many channels should be enabled).

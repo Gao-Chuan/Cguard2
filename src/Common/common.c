@@ -1,11 +1,13 @@
 #include <string.h>
 #include <stdlib.h>
+#include <pthread.h>
 
 #include "common.h"
+#include "amazonMQTT.h"
 
 // Initiate the channel list. First argument is the channels' names. Second argument
 // is the length of the channel list (How many channels should be enabled).
-// Initially, every channel is disabled.
+// Initially, every channel is enabled.
 // Return -1 if malloc returns NULL. Otherwise return 0.
 int initChannelList(char **channel_names, size_t channel_num){
     CHANNEL_LIST_LENGTH = channel_num;
@@ -23,8 +25,9 @@ int initChannelList(char **channel_names, size_t channel_num){
             return -1;
         }
         strncpy(CHANNEL_LIST[i].channel_name, channel_names[i], length);
-        // set initial status to False.
-        CHANNEL_LIST[i].enabled = 0;
+        // set initial status to True.
+        CHANNEL_LIST[i].enabled = 1;
+        CHANNEL_LIST[i].channel_thread = 0;
     }
     
     return 0;
@@ -55,8 +58,31 @@ int checkChannel(char *channel_name){
 int enableChannel(char *channel_name){
     for (size_t i = 0; i < CHANNEL_LIST_LENGTH; i++){
         if(strncmp(CHANNEL_LIST[i].channel_name, channel_name, strlen(channel_name)) == 0){
+            // check if this channel is running
+            if (CHANNEL_LIST[i].enabled = 1 && CHANNEL_LIST[i].channel_thread == 0){
+                printf("This channel is already enabled and running.\n");
+                return 0;
+            }
+            
             // set the channel status to True.
             CHANNEL_LIST[i].enabled = 1;
+
+            // start the channel's process.
+            pthread_t *channel_thread_id = malloc(sizeof(pthread_t *));
+            int ThreadSuccess = 0;
+
+            // if--- elase if---
+            // compare the channel's name with every known channel's name. To launch the channel process.
+            if(strcmp(channel_name, "amazon_MQTT") == 0){
+                ThreadSuccess = pthread_create(channel_thread_id, NULL, (void *)runAmazonMQTT, NULL); 
+                if(0 != ThreadSuccess){
+                    printf("Create AWS pthread error\n");
+                    exit(1);
+                }
+                CHANNEL_LIST[i].channel_thread = channel_thread_id;
+            }
+            
+
             return 0;
         }
     }
