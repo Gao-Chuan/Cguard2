@@ -41,7 +41,7 @@ int checkChannel(char *channel_name){
             if(CHANNEL_LIST[i].enabled == 1){
                 // return 1 if this channel is avaliable.
                 return 1;
-            } else if (CHANNEL_LIST[i].enabled == 1){
+            } else if (CHANNEL_LIST[i].enabled == 0){
                 // return 0 if this channel is not avaliable.
                 return 0;
             } else{
