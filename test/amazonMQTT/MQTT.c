@@ -11,13 +11,13 @@
 bool gLightBulbState = false;
 pthread_mutex_t gMutexLightBulb;
 
-void log(char *l){
+void mqtt_log(char *l){
     printf("%s\n", l);
 }
 
 void iot_subscribe_callback_handler(AWS_IoT_Client *pClient, char *topicName, uint16_t topicNameLen,
 									IoT_Publish_Message_Params *params, void *pData) {
-    log("Amazon MQTT channel is actually running!\n");
+    mqtt_log("Amazon MQTT channel is actually running!\n");
     char cmd = 0;
 
     cmd = ((char*) params->payload)[0];
@@ -46,9 +46,9 @@ void iot_subscribe_callback_handler(AWS_IoT_Client *pClient, char *topicName, ui
 
 char *cert_dir = "./cert";
 
-void check_err(int err, int good, char* err_log){
+void check_err(int err, int good, char* err_mqtt_log){
     if(err != good){
-        printf("%s\n", err_log);
+        printf("%s\n", err_mqtt_log);
         exit(1);
     }
     return;
@@ -61,17 +61,17 @@ int main(void){
 
     err = initChannelList(channel_names, 1);
     check_err(err, 0, "Failed to initialize.");
-    log("channel initialized!");
+    mqtt_log("channel initialized!");
 
     certDirectory = "./cert";
     pTopicName = "myLightBulb";
-    QoS qos = QOS0;
+    qos = QOS0;
     pApplicationHandler = &iot_subscribe_callback_handler;
     pApplicationHandlerData = NULL;
 
     err = enableChannel("amazon_MQTT");
     check_err(err, 0, "Failed to enable channel.");
-    log("channel enabled!");
+    mqtt_log("channel enabled!");
 
     if(CHANNEL_LIST[0].channel_thread == 0){
         printf("Process error.\n");
