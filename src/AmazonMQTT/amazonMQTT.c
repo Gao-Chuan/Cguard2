@@ -11,18 +11,25 @@
  *
  */
 #include <limits.h>
+#include <string.h>
 
 #include "aws_iot_mqtt_client.h"
 #include "aws_iot_log.h"
+#include "aws_iot_mqtt_client_interface.h"
 
 #include "AWSConfig.h"
 #include "amazonMQTT.h"
 #include "common.h"
 
 #define HOST_ADDRESS_SIZE 255
-/**
- * @brief the state of light bulb, on: ture; off: false
- */
+
+// runAmazonMQTT's arguments.
+// Only pApplicationHandlerData can be NULL.
+char *certDirectory = NULL;
+char *pTopicName = NULL;
+QoS qos = -1;
+pApplicationHandler_t pApplicationHandler = NULL;
+void *pApplicationHandlerData = NULL;
 
 char *channel = "amazonMQTT";
 
@@ -49,19 +56,29 @@ void disconnectCallbackHandler(AWS_IoT_Client *pClient, void *data) {
     }
 }
 
-void runAmazonMQTT(char *certDirectory, const char *pTopicName, QoS qos, pApplicationHandler_t pApplicationHandler, void *pApplicationHandlerData){
+// void runAmazonMQTT(char *certDirectory, const char *pTopicName, QoS qos, pApplicationHandler_t pApplicationHandler, void *pApplicationHandlerData){
+void runAmazonMQTT(void){
     // exit if this channel is not avaliable
     if (checkChannel(channel) == 0){
-        return NULL;
+        printf("Chennel closed. \n");
+        return;
     }
-    /**
-     * @brief Set it up in AWSConfig.h
-     */
-    // char certDirectory[PATH_MAX + 1] = "./certs/amazonMQTT";
-
-    /**
-     * @brief Set it up in AWSConfig.h
-     */
+    if (certDirectory == NULL || pTopicName == NULL ||qos == -1 || pApplicationHandler == NULL){
+        printf("Parameters error.\n");
+        if(certDirectory == NULL){
+            printf("cerDirectory NULL\n");
+        }
+        if(pTopicName == NULL){
+            printf("pTopicName NULL\n");
+        }
+        if(qos == -1){
+            printf("qos -1");
+        }
+        if(pApplicationHandler == NULL){
+            printf("pApplicationHandler NULL");
+        }
+        return;
+    }
     char HostAddress[HOST_ADDRESS_SIZE] = AWS_IOT_MQTT_HOST;
 
     /**
@@ -101,7 +118,7 @@ void runAmazonMQTT(char *certDirectory, const char *pTopicName, QoS qos, pApplic
     rc = aws_iot_mqtt_init(client, &mqttInitParams);
     if(SUCCESS != rc) {
         IOT_ERROR("aws_iot_mqtt_init returned error : %d ", rc);
-        return NULL;
+        return;
     }
 
     connectParams.keepAliveIntervalInSec = 600;
@@ -115,7 +132,7 @@ void runAmazonMQTT(char *certDirectory, const char *pTopicName, QoS qos, pApplic
     rc = aws_iot_mqtt_connect(client, &connectParams);
     if(SUCCESS != rc) {
         IOT_ERROR("Error(%d) connecting to %s:%d", rc, mqttInitParams.pHostURL, mqttInitParams.port);
-        return NULL;
+        return;
     }
 
     /*
@@ -130,7 +147,7 @@ void runAmazonMQTT(char *certDirectory, const char *pTopicName, QoS qos, pApplic
     }
 
     IOT_INFO("Subscribing to topic: %s", pTopicName);
-    rc = aws_iot_mqtt_subscribe(&client, pTopicName, strlen(pTopicName), qos, pApplicationHandler, pApplicationHandlerData);
+    rc = aws_iot_mqtt_subscribe(client, pTopicName, strlen(pTopicName), qos, pApplicationHandler, pApplicationHandlerData);
     if(SUCCESS != rc) {
         IOT_ERROR("Error subscribing : %d ", rc);
         return;
@@ -139,11 +156,12 @@ void runAmazonMQTT(char *certDirectory, const char *pTopicName, QoS qos, pApplic
     while(NETWORK_ATTEMPTING_RECONNECT == rc || NETWORK_RECONNECTED == rc || SUCCESS == rc) {
 
         if (checkChannel(channel) != 1){
-            IOT_INFO("channel is closed. Exiting...");
+            IOT_INFO("channel is closed. Exiting...\n");
+            break;
         }
 
         //Max time the yield function will wait for read messages
-        rc = aws_iot_mqtt_yield(&client, 100);
+        rc = aws_iot_mqtt_yield(client, 100);
         
         if(NETWORK_ATTEMPTING_RECONNECT == rc) {
             // If the client is attempting to reconnect we will skip the rest of the loop.
@@ -154,12 +172,12 @@ void runAmazonMQTT(char *certDirectory, const char *pTopicName, QoS qos, pApplic
     }
 
     // Wait for all the messages to be received
-    aws_iot_mqtt_yield(&client, 100);
+    aws_iot_mqtt_yield(client, 100);
 
     if(SUCCESS != rc) {
         IOT_ERROR("An error occurred in the loop.\n");
     } else {
-        IOT_INFO("LightBulb done\n");
+        IOT_INFO("LightBulb amazonMQTT channel closed.\n");
     }
 
     return;

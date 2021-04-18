@@ -5,22 +5,31 @@
 #include "common.h"
 #include "amazonMQTT.h"
 
+// First run flag
+int FIRST_RUN = 1;
+
+// To determine the accessibility status of each channel
+struct type_channel_list *CHANNEL_LIST = NULL;
+// The length of the channel list should be defined by the developer. 
+int CHANNEL_LIST_LENGTH = 0;
+
 // Initiate the channel list. First argument is the channels' names. Second argument
 // is the length of the channel list (How many channels should be enabled).
 // Initially, every channel is enabled.
-// Return -1 if malloc returns NULL. Otherwise return 0.
+// Return -1 if error occurs. Otherwise return 0.
 int initChannelList(char **channel_names, size_t channel_num){
     CHANNEL_LIST_LENGTH = channel_num;
+    FIRST_RUN = 1;
 
-    CHANNEL_LIST = (struct type_channel_list *)malloc(channel_num * sizeof(struct type_channel_list));
+    CHANNEL_LIST = (struct type_channel_list *)malloc(CHANNEL_LIST_LENGTH * sizeof(struct type_channel_list));
     if (CHANNEL_LIST == NULL){
         return -1;
     }
     
-    for (int i = 0; i < channel_num; i++){
+    for (int i = 0; i < CHANNEL_LIST_LENGTH; i++){
         int length = strlen(channel_names[i]);
         // setup channels' names
-        CHANNEL_LIST[i].channel_name = malloc(channel_num * length);
+        CHANNEL_LIST[i].channel_name = malloc(length + 1);
         if (CHANNEL_LIST[i].channel_name == NULL){
             return -1;
         }
@@ -59,7 +68,7 @@ int enableChannel(char *channel_name){
     for (size_t i = 0; i < CHANNEL_LIST_LENGTH; i++){
         if(strncmp(CHANNEL_LIST[i].channel_name, channel_name, strlen(channel_name)) == 0){
             // check if this channel is running
-            if (CHANNEL_LIST[i].enabled = 1 && CHANNEL_LIST[i].channel_thread == 0){
+            if (CHANNEL_LIST[i].enabled = 1 && CHANNEL_LIST[i].channel_thread != 0){
                 printf("This channel is already enabled and running.\n");
                 return 0;
             }
@@ -68,7 +77,7 @@ int enableChannel(char *channel_name){
             CHANNEL_LIST[i].enabled = 1;
 
             // start the channel's process.
-            pthread_t *channel_thread_id = malloc(sizeof(pthread_t *));
+            pthread_t *channel_thread_id = (pthread_t *)malloc(sizeof(pthread_t));
             int ThreadSuccess = 0;
 
             // if--- elase if---
@@ -79,9 +88,20 @@ int enableChannel(char *channel_name){
                     printf("Create AWS pthread error\n");
                     exit(1);
                 }
-                CHANNEL_LIST[i].channel_thread = channel_thread_id;
+                CHANNEL_LIST[i].channel_thread = *channel_thread_id;
             }
             
+            // If this is the first running, close other channels.
+            if(FIRST_RUN == 1){
+                printf("First running detected.\n");
+                FIRST_RUN = 0;
+                for(int i = 0; i < CHANNEL_LIST_LENGTH; i++){
+                    if(strncmp(CHANNEL_LIST[i].channel_name, channel_name, strlen(channel_name)) != 0){
+                        CHANNEL_LIST[i].enabled = 0;
+                    }
+                }
+                printf("All other channels have been closed.\n");
+            }
 
             return 0;
         }

@@ -2,23 +2,24 @@
 #define COMMON_H
 
 #include <pthread.h>
+
+// First run flag
+extern int FIRST_RUN;
+
 // To determine the accessibility status of each channel
 struct type_channel_list{
     char *channel_name;
     pthread_t channel_thread;
     int enabled;
 };
-struct type_channel_list *CHANNEL_LIST = NULL;
+extern struct type_channel_list *CHANNEL_LIST;
 // The length of the channel list should be defined by the developer. 
-int CHANNEL_LIST_LENGTH;
-
-// An array to store channels' threads.
-int RUNNING_CHANNEL = 0;
+extern int CHANNEL_LIST_LENGTH;
 
 // Initiate the channel list. First argument is the channels' names. Second argument
 // is the length of the channel list (How many channels should be enabled).
 // Initially, every channel is disabled.
-// Return -1 if malloc returns NULL. Otherwise return 0.
+// Return -1 if error occurs. Otherwise return 0.
 int initChannelList(char **channel_names, unsigned long channel_num);
 
 // Check the channel's availability. Return 1 if the channel is avaliable. Otherwise return 0.
