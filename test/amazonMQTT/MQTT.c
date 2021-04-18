@@ -17,10 +17,11 @@ void mqtt_log(char *l){
 
 void iot_subscribe_callback_handler(AWS_IoT_Client *pClient, char *topicName, uint16_t topicNameLen,
 									IoT_Publish_Message_Params *params, void *pData) {
-    mqtt_log("Amazon MQTT channel is actually running!\n");
     char cmd = 0;
 
     cmd = ((char*) params->payload)[0];
+
+    printf("received command:>>%c", cmd);
 
     switch(cmd) {
         case 'n':

@@ -46,6 +46,7 @@ int initChannelList(char **channel_names, size_t channel_num){
 // If there's no such channel or the status is broken(not 1 or 0), return -1.
 int checkChannel(char *channel_name){
     for (size_t i = 0; i < CHANNEL_LIST_LENGTH; i++){
+        printf("-%s-%s-", CHANNEL_LIST[i].channel_name, channel_name);
         if(strncmp(CHANNEL_LIST[i].channel_name, channel_name, strlen(channel_name)) == 0){
             if(CHANNEL_LIST[i].enabled == 1){
                 // return 1 if this channel is avaliable.

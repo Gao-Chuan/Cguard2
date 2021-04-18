@@ -31,7 +31,7 @@ QoS qos = -1;
 pApplicationHandler_t pApplicationHandler = NULL;
 void *pApplicationHandlerData = NULL;
 
-char *channel = "amazonMQTT";
+char *channel = "amazon_MQTT";
 
 void disconnectCallbackHandler(AWS_IoT_Client *pClient, void *data) {
     IOT_WARN("MQTT Disconnect");
@@ -154,6 +154,8 @@ void runAmazonMQTT(void){
     }
     
     while(NETWORK_ATTEMPTING_RECONNECT == rc || NETWORK_RECONNECTED == rc || SUCCESS == rc) {
+
+        printf("checkChannel returned value: %d\n", checkChannel(channel));
 
         if (checkChannel(channel) != 1){
             IOT_INFO("channel is closed. Exiting...\n");
