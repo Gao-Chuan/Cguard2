@@ -12,6 +12,7 @@
  */
 #include <limits.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "aws_iot_mqtt_client.h"
 #include "aws_iot_log.h"

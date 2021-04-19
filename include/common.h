@@ -20,7 +20,7 @@ extern int CHANNEL_LIST_LENGTH;
 // is the length of the channel list (How many channels should be enabled).
 // Initially, every channel is disabled.
 // Return -1 if error occurs. Otherwise return 0.
-int initChannelList(char **channel_names, unsigned long channel_num);
+int initChannelList(char **channel_names, size_t channel_num);
 
 // Check the channel's availability. Return 1 if the channel is avaliable. Otherwise return 0.
 // If there's no such channel or the status is broken(not 1 or 0), return -1.
