@@ -3,6 +3,7 @@
 
 #include <pthread.h>
 
+
 // First run flag
 extern int FIRST_RUN;
 
@@ -20,7 +21,7 @@ extern int CHANNEL_LIST_LENGTH;
 // is the length of the channel list (How many channels should be enabled).
 // Initially, every channel is disabled.
 // Return -1 if error occurs. Otherwise return 0.
-int initChannelList(char **channel_names, unsigned long channel_num);
+int initChannelList(char **channel_names, size_t channel_num);
 
 // Check the channel's availability. Return 1 if the channel is avaliable. Otherwise return 0.
 // If there's no such channel or the status is broken(not 1 or 0), return -1.
@@ -34,4 +35,7 @@ int enableChannel(char *channel_name);
 // Return -1 if there's no such channel name. Otherwise return 0.
 int disableChannel(char *channel_name);
 
+void runAmazonMQTT(void);
+
+void runZigbee(void);
 #endif
