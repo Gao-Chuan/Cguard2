@@ -3,7 +3,7 @@
 
 #include "aws_iot_mqtt_client.h"
 
-void runAmazonMQTT(void);
+//void runAmazonMQTT(void);
 
 // runAmazonMQTT's arguments.
 // Only pApplicationHandlerData can be NULL.
