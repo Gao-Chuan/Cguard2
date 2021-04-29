@@ -10,14 +10,24 @@
 
 bool gLightBulbState = false;
 pthread_mutex_t gMutexLightBulb;
+char *cert_dir = "./cert";
 
 void mqtt_log(char *l){
     printf("%s\n", l);
 }
 
+void check_err(int err, int good, char* err_mqtt_log){
+    if(err != good){
+        printf("%s\n", err_mqtt_log);
+        exit(1);
+    }
+    return;
+}
+
 void iot_subscribe_callback_handler(AWS_IoT_Client *pClient, char *topicName, uint16_t topicNameLen,
 									IoT_Publish_Message_Params *params, void *pData) {
     char cmd = 0;
+    int err;
 
     cmd = ((char*) params->payload)[0];
 
@@ -39,28 +49,28 @@ void iot_subscribe_callback_handler(AWS_IoT_Client *pClient, char *topicName, ui
             IOT_INFO("Exiting from AWSChannel.");
             pthread_exit(NULL);
             break;
+        // enable Homekit Chennel
+        case 'H':
+            err = enableChannel("homekit");
+            check_err(err, 0, "Failed to enable homekit channel.");
+            mqtt_log("homekit channel enabled!");
+            break;
+        // diable Homekit Chennel
+        case 'h':
+            disableChannel("homekit");
+            break;
         default:
             printf("[Error:] Unsupported command.\n");
             break;
 		}
 }
 
-char *cert_dir = "./cert";
-
-void check_err(int err, int good, char* err_mqtt_log){
-    if(err != good){
-        printf("%s\n", err_mqtt_log);
-        exit(1);
-    }
-    return;
-}
-
 int main(void){
-    char *channel_names[] = {"amazon_MQTT"};
+    char *channel_names[] = {"amazon_MQTT", "homekit"};
     int err;
 	pthread_mutex_init(&gMutexLightBulb, NULL);
 
-    err = initChannelList(channel_names, 1);
+    err = initChannelList(channel_names, 2);
     check_err(err, 0, "Failed to initialize.");
     mqtt_log("channel initialized!");
 
