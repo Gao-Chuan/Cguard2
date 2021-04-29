@@ -169,14 +169,14 @@ int PrepareNewSetupCode(void)
 {
     HAPSetupCode setupCode;
     HAPAccessorySetupGenerateRandomSetupCode(&setupCode);
-    printf("\n****************HomeKit Setup Code is %s *********************\n", setupCode.stringValue);
+    // printf("\n****************HomeKit Setup Code is %s *********************\n", setupCode.stringValue);
     // Setup info.
     HAPSetupInfo setupInfo;
     HAPPlatformRandomNumberFill(setupInfo.salt, sizeof setupInfo.salt);
     const uint8_t srpUserName[] = "Pair-Setup";
     
     // // ***for debug purpose only
-    // memcpy(setupCode.stringValue, "111-22-333", sizeof(setupCode.stringValue));
+    memcpy(setupCode.stringValue, "111-22-333", sizeof(setupCode.stringValue));
     // // ***end debug
 
     HAP_srp_verifier(

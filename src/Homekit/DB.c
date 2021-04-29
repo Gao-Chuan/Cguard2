@@ -454,7 +454,7 @@ const HAPBoolCharacteristic lightBulbOnCharacteristic = {
                     .supportsEventNotification = true,
                     .hidden = false,
                     .requiresTimedWrite = false,
-                    .supportsAuthorizationData = true,
+                    .supportsAuthorizationData = false,
                     .ip = { .controlPoint = false, .supportsWriteResponse = false },
                     .ble = { .supportsBroadcastNotification = true,
                              .supportsDisconnectedNotification = true,
