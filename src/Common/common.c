@@ -118,6 +118,16 @@ int enableChannel(char *channel_name){
                 CHANNEL_LIST[i].channel_thread = *channel_thread_id;
             }
             
+             // if channel_name is Gadget call runGadget to start Gadget control
+            if(strcmp(channel_name, "Gadget") == 0){
+                ThreadSuccess = pthread_create(channel_thread_id, NULL, (void *)runGadget, NULL); 
+                if(0 != ThreadSuccess){
+                    printf("Create Gadget pthread error\n");
+                    exit(1);
+                }
+                CHANNEL_LIST[i].channel_thread = *channel_thread_id;
+            }
+            
             // If this is the first running, close other channels.
             if(FIRST_RUN == 1){
                 printf("First running detected.\n");

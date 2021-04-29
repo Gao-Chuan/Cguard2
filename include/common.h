@@ -39,4 +39,6 @@ void runAmazonMQTT(void);
 
 void runZigbee(void);
 
+void runGadget(void);
+
 #endif
