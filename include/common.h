@@ -3,6 +3,7 @@
 
 #include <pthread.h>
 
+
 // First run flag
 extern int FIRST_RUN;
 
@@ -33,5 +34,9 @@ int enableChannel(char *channel_name);
 // Disable a channel. This function will only change the status of CHANNEL_LIST.
 // Return -1 if there's no such channel name. Otherwise return 0.
 int disableChannel(char *channel_name);
+
+void runAmazonMQTT(void);
+
+void runZigbee(void);
 
 #endif

@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <stdio.h>
 
 #include "common.h"
 #include "amazonMQTT.h"
@@ -91,17 +92,31 @@ int enableChannel(char *channel_name){
             // compare the channel's name with every known channel's name. To launch the channel process.
             if(strcmp(channel_name, "amazon_MQTT") == 0){
                 ThreadSuccess = pthread_create(channel_thread_id, NULL, (void *)runAmazonMQTT, NULL); 
+                if(0 != ThreadSuccess){
+                    printf("Create AWS pthread error\n");
+                    exit(1);
+                }
+                CHANNEL_LIST[i].channel_thread = *channel_thread_id;
             }
             else if(strcmp(channel_name, "homekit") == 0){
                 PrepareNewSetupCode();
                 ThreadSuccess = pthread_create(channel_thread_id, NULL, (void *)runHomekit, NULL); 
+                if(0 != ThreadSuccess){
+                    printf("Create HomeKit pthread error\n");
+                    exit(1);
+                }
+                CHANNEL_LIST[i].channel_thread = *channel_thread_id;
             }
-
-            if(0 != ThreadSuccess){
-                printf("Create AWS pthread error\n");
-                exit(1);
+            
+             // if channel_name is zigbee call runZigbee to start zigbee control
+            else if(strcmp(channel_name, "Zigbee") == 0){
+                ThreadSuccess = pthread_create(channel_thread_id, NULL, (void *)runZigbee, NULL); 
+                if(0 != ThreadSuccess){
+                    printf("Create Zigbee pthread error\n");
+                    exit(1);
+                }
+                CHANNEL_LIST[i].channel_thread = *channel_thread_id;
             }
-            CHANNEL_LIST[i].channel_thread = *channel_thread_id;
             
             // If this is the first running, close other channels.
             if(FIRST_RUN == 1){
@@ -162,8 +177,6 @@ int disableChannel(char *channel_name){
     }
     return -1;
 }
-
-
 
 int PrepareNewSetupCode(void)
 {

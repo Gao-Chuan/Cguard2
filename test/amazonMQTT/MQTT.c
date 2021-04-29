@@ -8,6 +8,8 @@
 #include "amazonMQTT.h"
 #include "VendorFunction.h"
 
+
+
 bool gLightBulbState = false;
 pthread_mutex_t gMutexLightBulb;
 
