@@ -80,7 +80,7 @@ COMPILER_FLAGS += $(LOG_FLAGS)
 MBED_TLS_MAKE_CMD = $(MAKE) -C $(MBEDTLS_DIR)
 
 PRE_MAKE_CMD = $(MBED_TLS_MAKE_CMD)
-MAKE_CMD = $(CC) $(APP_NAME).c $(CG2_SRC_DIRS) $(COMPILER_FLAGS) -o $(APP_NAME) -pthread -ldns_sd -lm  -lcrypto -L. -lAwsIotSdk -L../../LibFiles -lLinux -lOpenSSL -lhap $(LD_FLAG) $(INCLUDE_ALL_DIRS)
+MAKE_CMD = $(CC) $(APP_NAME).c $(CG2_SRC_DIRS) $(COMPILER_FLAGS) -o $(APP_NAME) -pthread -ldns_sd -lm  -lcrypto -L. -lwiringPi -lAwsIotSdk -L../../LibFiles -lLinux -lOpenSSL -lhap $(LD_FLAG) $(INCLUDE_ALL_DIRS)
 
 all: libAwsIotSdk.a
 	$(PRE_MAKE_CMD)
