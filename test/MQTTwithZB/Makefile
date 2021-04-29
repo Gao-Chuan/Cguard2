@@ -9,7 +9,7 @@ DEBUG = @
 
 APP_DIR = .
 APP_INCLUDE_DIRS += -I $(APP_DIR)
-APP_NAME = MQTT
+APP_NAME = main
 APP_SRC_FILES = $(APP_NAME).c
 
 #IoT client directory

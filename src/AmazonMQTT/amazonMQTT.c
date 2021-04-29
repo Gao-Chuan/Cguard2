@@ -20,6 +20,7 @@
 
 #include "AWSConfig.h"
 #include "amazonMQTT.h"
+#include "VendorFunction.h"
 #include "common.h"
 
 #define HOST_ADDRESS_SIZE 255
@@ -146,6 +147,7 @@ void runAmazonMQTT(void){
         IOT_ERROR("Unable to set Auto Reconnect to true - %d", rc);
         return;
     }
+  
 
     IOT_INFO("Subscribing to topic: %s", pTopicName);
     rc = aws_iot_mqtt_subscribe(client, pTopicName, strlen(pTopicName), qos, pApplicationHandler, pApplicationHandlerData);
@@ -154,6 +156,7 @@ void runAmazonMQTT(void){
         return;
     }
     
+
     while(NETWORK_ATTEMPTING_RECONNECT == rc || NETWORK_RECONNECTED == rc || SUCCESS == rc) {
 
         printf("checkChannel returned value: %d\n", checkChannel(channel));
@@ -162,6 +165,19 @@ void runAmazonMQTT(void){
             IOT_INFO("channel is closed. Exiting...\n");
             break;
         }
+
+        
+        if(ReadDeviceStatus() == 0)
+            sprintf(cPayload, "%s", "Status:OFF");
+        if(ReadDeviceStatus() == 1)
+            sprintf(cPayload, "%s", "Status:ON");
+
+        IoT_Publish_Message_Params paramsQOS0;
+	    paramsQOS0.qos= QOS0;
+	    paramsQOS0.payload = (void *) cPayload;
+        paramsQOS0.payloadLen = strlen(cPayload);
+	    paramsQOS0.isRetained = 0;
+        rc = aws_iot_mqtt_publish(client, "CheckLightStatus", 16, &paramsQOS0);
 
         //Max time the yield function will wait for read messages
         rc = aws_iot_mqtt_yield(client, 100);
@@ -173,7 +189,7 @@ void runAmazonMQTT(void){
         
         sleep(1);
     }
-
+    
     // Wait for all the messages to be received
     aws_iot_mqtt_yield(client, 100);
 
@@ -185,3 +201,5 @@ void runAmazonMQTT(void){
 
     return;
 }
+
+
