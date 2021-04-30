@@ -4,7 +4,10 @@
 #include <stdio.h>
 
 #include "common.h"
-//#include "amazonMQTT.h"
+#include "amazonMQTT.h"
+#include "HAP.h"
+#include "homekit.h"
+#include "HAPAccessorySetup.h"
 
 // First run flag
 int FIRST_RUN = 1;
@@ -13,6 +16,9 @@ int FIRST_RUN = 1;
 struct type_channel_list *CHANNEL_LIST = NULL;
 // The length of the channel list should be defined by the developer. 
 int CHANNEL_LIST_LENGTH = 0;
+
+// Homekit setup code init API.
+int PrepareNewSetupCode(void);
 
 // Initiate the channel list. First argument is the channels' names. Second argument
 // is the length of the channel list (How many channels should be enabled).
@@ -92,6 +98,25 @@ int enableChannel(char *channel_name){
                 }
                 CHANNEL_LIST[i].channel_thread = *channel_thread_id;
             }
+            else if(strcmp(channel_name, "homekit") == 0){
+                PrepareNewSetupCode();
+                ThreadSuccess = pthread_create(channel_thread_id, NULL, (void *)runHomekit, NULL); 
+                if(0 != ThreadSuccess){
+                    printf("Create HomeKit pthread error\n");
+                    exit(1);
+                }
+                CHANNEL_LIST[i].channel_thread = *channel_thread_id;
+            }
+            
+             // if channel_name is zigbee call runZigbee to start zigbee control
+            else if(strcmp(channel_name, "Zigbee") == 0){
+                ThreadSuccess = pthread_create(channel_thread_id, NULL, (void *)runZigbee, NULL); 
+                if(0 != ThreadSuccess){
+                    printf("Create Zigbee pthread error\n");
+                    exit(1);
+                }
+                CHANNEL_LIST[i].channel_thread = *channel_thread_id;
+            }
             
              // if channel_name is Gadget call runGadget to start Gadget control
             if(strcmp(channel_name, "Gadget") == 0){
@@ -121,15 +146,79 @@ int enableChannel(char *channel_name){
     return -1;
 }
 
+extern HAPAccessoryServerRef gHAPaccessoryServer;
+// Homekit channel's shutdown function
+void doHAPAccessoryServerStop(void* _Nullable context, size_t contextSize) {
+    if (context) {
+        HAPAccessoryServerStop(&gHAPaccessoryServer);
+        printf("\nStart stoping the HAP server!\n");
+    } else
+    {
+        printf("\nIn Homekit close function. Context is NULL!\n");
+    }
+}
+
 // Disable a channel. This function will only change the status of CHANNEL_LIST.
 // Return -1 if there's no such channel name. Otherwise return 0.
 int disableChannel(char *channel_name){
-        for (size_t i = 0; i < CHANNEL_LIST_LENGTH; i++){
+    for (size_t i = 0; i < CHANNEL_LIST_LENGTH; i++){
         if(strncmp(CHANNEL_LIST[i].channel_name, channel_name, strlen(channel_name)) == 0){
             // set the channel status to False.
             CHANNEL_LIST[i].enabled = 0;
+            // remove the thread address
+            CHANNEL_LIST[i].channel_thread = 0;
+            // close Homekit
+            if(strcmp(channel_name, "homekit") == 0){
+                HAPError e = HAPPlatformRunLoopScheduleCallback(
+                        doHAPAccessoryServerStop,
+                        (void*) &gHAPaccessoryServer, 
+                        sizeof(void*));
+                if (e != kHAPError_None) {
+                    //todo:error handle
+                    return -1;
+                } else
+                {
+                    printf("\nScheduled ServerStop\n");
+                    //gisHomeKitEnabled = false;
+                }
+            }
             return 0;
         }
     }
     return -1;
+}
+
+int PrepareNewSetupCode(void)
+{
+    HAPSetupCode setupCode;
+    HAPAccessorySetupGenerateRandomSetupCode(&setupCode);
+    // printf("\n****************HomeKit Setup Code is %s *********************\n", setupCode.stringValue);
+    // Setup info.
+    HAPSetupInfo setupInfo;
+    HAPPlatformRandomNumberFill(setupInfo.salt, sizeof setupInfo.salt);
+    const uint8_t srpUserName[] = "Pair-Setup";
+    
+    // // ***for debug purpose only
+    memcpy(setupCode.stringValue, "111-22-333", sizeof(setupCode.stringValue));
+    // // ***end debug
+
+    HAP_srp_verifier(
+            setupInfo.verifier,
+            setupInfo.salt,
+            srpUserName,
+            sizeof srpUserName - 1,
+            (const uint8_t*) setupCode.stringValue,
+            sizeof setupCode.stringValue - 1);
+
+    FILE *fp = fopen("./.HomeKitStore/40.10", "wb");
+    if (fp == NULL) {
+        printf("Create setup file failed.\n");
+        return -1;
+    } else
+    {
+        fwrite(&setupInfo, sizeof(HAPSetupInfo), 1, fp);
+        fclose(fp);
+    }
+    
+    return 0;
 }

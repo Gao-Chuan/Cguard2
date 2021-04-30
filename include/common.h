@@ -3,6 +3,7 @@
 
 #include <pthread.h>
 
+
 // First run flag
 extern int FIRST_RUN;
 
@@ -35,6 +36,10 @@ int enableChannel(char *channel_name);
 int disableChannel(char *channel_name);
 
 void runAmazonMQTT(void);
+
+void runZigbee(void);
+
 void runGadget(void);
+
 
 #endif

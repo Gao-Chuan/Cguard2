@@ -8,6 +8,8 @@
 #include "amazonMQTT.h"
 #include "VendorFunction.h"
 
+
+
 bool gLightBulbState = false;
 pthread_mutex_t gMutexLightBulb;
 
@@ -27,6 +29,7 @@ void iot_subscribe_callback_handler(AWS_IoT_Client *pClient, char *topicName, ui
         case 'n':
 			OperateDevice(true);
             break;
+            
         case 'f':
 			OperateDevice(false);
             break;

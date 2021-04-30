@@ -34,6 +34,7 @@ CG2_INCLUDE_DIR += -I $(CGUARD2)/include
 CG2_SRC_DIRS += $(shell find $(CGUARD2)/src/Common -name '*.c')
 CG2_SRC_DIRS += $(shell find $(CGUARD2)/src/Vender -name '*.c')
 CG2_SRC_DIRS += $(shell find $(CGUARD2)/src/AmazonMQTT -name '*.c')
+CG2_SRC_DIRS += $(shell find $(CGUARD2)/src/TiZigbee -name '*.c')
 
 #TLS - mbedtls
 MBEDTLS_DIR = $(IOT_CLIENT_DIR)/external_libs/mbedTLS
@@ -66,7 +67,7 @@ COMPILER_FLAGS += $(LOG_FLAGS)
 MBED_TLS_MAKE_CMD = $(MAKE) -C $(MBEDTLS_DIR)
 
 PRE_MAKE_CMD = $(MBED_TLS_MAKE_CMD)
-MAKE_CMD = $(CC) $(APP_NAME).c $(CG2_SRC_DIRS) $(COMPILER_FLAGS) -o $(APP_NAME) -L. -lAwsIotSdk $(LD_FLAG) $(INCLUDE_ALL_DIRS)
+MAKE_CMD = $(CC) $(APP_NAME).c $(CG2_SRC_DIRS) $(COMPILER_FLAGS) -o $(APP_NAME) -L. -lwiringPi -lAwsIotSdk $(LD_FLAG) $(INCLUDE_ALL_DIRS)
 
 all: libAwsIotSdk.a
 	$(PRE_MAKE_CMD)
