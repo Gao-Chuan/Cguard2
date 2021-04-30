@@ -4,6 +4,8 @@
 
 int HomekitMainFunction(int argc, char*  argv[]);
 void runHomekit(void);
+
+void runZigbee(void);
 extern HAPAccessoryServerRef gHAPaccessoryServer;
 
 #endif

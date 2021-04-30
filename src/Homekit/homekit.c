@@ -9,6 +9,7 @@
 
 #include "App.h"
 #include "DB.h"
+#include "common.h"
 
 #include "HAP.h"
 #include "HAPPlatform+Init.h"
