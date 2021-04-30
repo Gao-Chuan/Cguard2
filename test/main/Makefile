@@ -55,6 +55,10 @@ CG2_SRC_DIRS += $(shell find $(CGUARD2)/src/Common -name '*.c')
 CG2_SRC_DIRS += $(shell find $(CGUARD2)/src/Vender -name '*.c')
 CG2_SRC_DIRS += $(shell find $(CGUARD2)/src/AmazonMQTT -name '*.c')
 CG2_SRC_DIRS += $(shell find $(CGUARD2)/src/Homekit -name '*.c')
+CG2_SRC_DIRS += $(shell find $(CGUARD2)/src/TiZigbee -name '*.c')
+CG2_SRC_DIRS += $(shell find $(CGUARD2)/src/AmazonGadget -name '*.c')
+
+
 
 #Aggregate all include and src directories
 INCLUDE_ALL_DIRS += $(IOT_INCLUDE_DIRS)
