@@ -35,6 +35,8 @@ int enableChannel(char *channel_name);
 // Return -1 if there's no such channel name. Otherwise return 0.
 int disableChannel(char *channel_name);
 
+int closeotherChannel(char *channel_name);
+
 void runAmazonMQTT(void);
 
 void runZigbee(void);

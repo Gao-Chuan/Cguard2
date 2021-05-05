@@ -35,10 +35,10 @@ void iot_subscribe_callback_handler(AWS_IoT_Client *pClient, char *topicName, ui
 
     switch(cmd) {
         case 't':
-			OperateDevice(true);
+			OperateDevice(true,"amazon_MQTT");
             break;
         case 'f':
-			OperateDevice(false);
+			OperateDevice(false,"amazon_MQTT");
             break;
         case 'q':
             pthread_mutex_lock(&gMutexLightBulb);
@@ -101,14 +101,31 @@ int main(void){
     pApplicationHandlerData = NULL;
 
     err = enableChannel("amazon_MQTT");
-    check_err(err, 0, "Failed to enable channel.");
-    mqtt_log("channel enabled!");
+    check_err(err, 0, "Failed to enable amazon_MQTT channel.");
+    mqtt_log("amazon_MQTT channel enabled!");
 
-    if(CHANNEL_LIST[0].channel_thread == 0){
+    err = enableChannel("homekit");
+    check_err(err, 0, "Failed to enable homekit channel.");
+    mqtt_log("homekit channel enabled!");
+
+    err = enableChannel("Gadget");
+    check_err(err, 0, "Failed to enable Gadget channel.");
+    mqtt_log("Gadget channel enabled!");
+
+
+    err = enableChannel("Zigbee");
+    check_err(err, 0, "Failed to enable Zigbee channel.");
+    mqtt_log("Zigbee channel enabled!");
+
+
+    if(CHANNEL_LIST[0].channel_thread == 0 && CHANNEL_LIST[1].channel_thread == 0 && CHANNEL_LIST[2].channel_thread == 0 && CHANNEL_LIST[3].channel_thread == 0){
         printf("Process error.\n");
         exit(1);
     } else{
         pthread_join(CHANNEL_LIST[0].channel_thread, NULL);
+        pthread_join(CHANNEL_LIST[1].channel_thread, NULL);
+        pthread_join(CHANNEL_LIST[2].channel_thread, NULL);
+        pthread_join(CHANNEL_LIST[3].channel_thread, NULL);
     }
 
     printf("End of main process.\n");

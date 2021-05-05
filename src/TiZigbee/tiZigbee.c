@@ -5,6 +5,8 @@
 #include "common.h"
 #include "VendorFunction.h"
 
+
+
 void runZigbee(void){
 	int fd;
 	int receiveVal;  
@@ -30,12 +32,12 @@ void runZigbee(void){
 		switch(receiveVal)
 		{
 			case 235:   //on-n
-			  printf("received command:>>n---turn on the light");	
-			  OperateDevice(true);
+			  printf("received command:>>n---turn on the light");
+			  OperateDevice(true,"Zigbee");
 			  break;
 			case 233:   //off-f
 			  printf("received command:>>f---turn off the light");
-			  OperateDevice(false);
+			  OperateDevice(false,"Zigbee");
 			  break;
 			case 236:  //query-q
 			  printf("received command:>>q---check the staus of light");

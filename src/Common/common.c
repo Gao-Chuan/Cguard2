@@ -76,7 +76,7 @@ int enableChannel(char *channel_name){
     for (size_t i = 0; i < CHANNEL_LIST_LENGTH; i++){
         if(strncmp(CHANNEL_LIST[i].channel_name, channel_name, strlen(channel_name)) == 0){
             // check if this channel is running
-            if (CHANNEL_LIST[i].enabled = 1 && CHANNEL_LIST[i].channel_thread != 0){
+            if (CHANNEL_LIST[i].enabled == 1 && CHANNEL_LIST[i].channel_thread != 0){
                 printf("This channel is already enabled and running.\n");
                 return 0;
             }
@@ -129,16 +129,16 @@ int enableChannel(char *channel_name){
             }
             
             // If this is the first running, close other channels.
-            if(FIRST_RUN == 1){
-                printf("First running detected.\n");
-                FIRST_RUN = 0;
-                for(int i = 0; i < CHANNEL_LIST_LENGTH; i++){
-                    if(strncmp(CHANNEL_LIST[i].channel_name, channel_name, strlen(channel_name)) != 0){
-                        CHANNEL_LIST[i].enabled = 0;
-                    }
-                }
-                printf("All other channels have been closed.\n");
-            }
+            // if(FIRST_RUN == 1){
+            //     printf("First running detected.\n");
+            //     FIRST_RUN = 0;
+            //     for(int i = 0; i < CHANNEL_LIST_LENGTH; i++){
+            //         if(strncmp(CHANNEL_LIST[i].channel_name, channel_name, strlen(channel_name)) != 0){
+            //             CHANNEL_LIST[i].enabled = 0;
+            //         }
+            //     }
+            //     printf("All other channels have been closed.\n");
+            // }
 
             return 0;
         }
@@ -156,6 +156,34 @@ void doHAPAccessoryServerStop(void* _Nullable context, size_t contextSize) {
     {
         printf("\nIn Homekit close function. Context is NULL!\n");
     }
+}
+
+int closeotherChannel(char *channel_name)
+{
+    for(int i = 0; i < CHANNEL_LIST_LENGTH; i++){
+        if(strncmp(CHANNEL_LIST[i].channel_name, channel_name, strlen(channel_name)) != 0){
+            CHANNEL_LIST[i].enabled = 0;
+            CHANNEL_LIST[i].channel_thread = 0;
+            if(strcmp(CHANNEL_LIST[i].channel_name, "homekit") == 0){
+                HAPError e = HAPPlatformRunLoopScheduleCallback(
+                doHAPAccessoryServerStop,
+                (void*) &gHAPaccessoryServer, 
+                sizeof(void*));
+                if (e != kHAPError_None) {
+                    //todo:error handle
+                    return -1;
+                } 
+                else
+                {
+                    printf("\nScheduled ServerStop\n");
+                    //gisHomeKitEnabled = false;
+                }
+                system("cd .HomeKitStore;rm -f /40.10 90.00 90.10 90.20 90.21");
+            }
+        }
+    }
+    printf("All other channels have been closed.\n");
+    return 1;
 }
 
 // Disable a channel. This function will only change the status of CHANNEL_LIST.
@@ -181,6 +209,7 @@ int disableChannel(char *channel_name){
                     printf("\nScheduled ServerStop\n");
                     //gisHomeKitEnabled = false;
                 }
+                system("cd .HomeKitStore;rm -f /40.10 90.00 90.10 90.20 90.21");
             }
             return 0;
         }

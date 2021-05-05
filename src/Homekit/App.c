@@ -169,7 +169,7 @@ HAPError HandleLightBulbOnWrite(
 
     if (accessoryConfiguration.state.lightBulbOn != value) {
         accessoryConfiguration.state.lightBulbOn = value;
-        OperateDevice(value);
+        OperateDevice(value,"homekit");
         
         SaveAccessoryState();
 
