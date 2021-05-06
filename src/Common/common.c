@@ -209,7 +209,7 @@ int disableChannel(char *channel_name){
                     printf("\nScheduled ServerStop\n");
                     //gisHomeKitEnabled = false;
                 }
-                system("cd .HomeKitStore;rm -f /40.10 90.00 90.10 90.20 90.21");
+                system("cd .HomeKitStore;rm -f 40.10 90.00 90.10 90.20 90.21 A0.00");
             }
             return 0;
         }
