@@ -1,10 +1,23 @@
 /*VendorFunction.c is implemented by vendor*/
 
+#include <string.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <stdio.h>
 #include "VendorFunction.h"
+#include "common.h"
 #include <wiringPi.h>
 
-void OperateDevice(bool value)
-{   
+int operatrtime = 0;
+
+void OperateDevice(bool value,char* channel_name)
+{   operatrtime = operatrtime +1;
+    //printf("it is the %d time to operate device", operatrtime);
+    if (operatrtime == 1)
+    {
+        closeotherChannel(channel_name);
+    }
+
     //led init
     char LED = 4;// <wiringPi.h> gpio23 Eighth on the upper right
     if(wiringPiSetup() < 0){

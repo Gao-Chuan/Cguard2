@@ -17,7 +17,8 @@ class VenderPy():
         
     def OperateDevicePy(self,value):
         pina = 23 #rpi23
-        print("****Set light status to %d ****" % value)
+
+        print("****Gadget Set light status to %d ****" % value)
         
         if(value == 1):
             GPIO.output(pina, GPIO.HIGH)
@@ -31,7 +32,7 @@ class VenderPy():
         
 
     def ReadDeviceStatusPy(self):
-        print("****Set light status to %d ****" % value)
+        print("****Gadget Set light status to %d ****" % value)
         return value
 
 if __name__ == '__main__':

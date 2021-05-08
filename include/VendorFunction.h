@@ -6,6 +6,6 @@
 extern bool gLightBulbState;
 extern pthread_mutex_t gMutexLightBulb;
 
-void OperateDevice(bool value);
+void OperateDevice(bool value,char *channel);
 
 bool ReadDeviceStatus(void);

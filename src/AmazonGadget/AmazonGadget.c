@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h> 
 #include "common.h"
 //#include <Python.h>
 #include <pthread.h>
+#include <unistd.h>
 #include "VendorFunction.h"
 
 //cmd
@@ -11,55 +13,48 @@ char setup_cmd[85] = "sudo python3 ../../lib/Alexa-Gadgets-Raspberry-Pi-Samples/
 char choose[20];
 char wake_pair_cmd[85] = "sudo python3 ../../src/AmazonGadget/GadgetLed.py --pair";
 char wake_clear_cmd[85] = "sudo python3 ../../src/AmazonGadget/GadgetLed.py --clear";
-
+char input;//keyboard input
 
 void runGadget(void){
-
+	//cancel auto setup
 	//setup 
-	system(setup_cmd);
-	printf("setup ok\n");
-	//printf("pair or clear or end(p c e):\n");
-	//scanf("%s",(char *)&choose);
+	//system(setup_cmd);
 
-	
-while(strcmp(choose,"e")!=0){
+
+//gadget loop
+while(1){
 	// exit if this channel is not avaliable
     if (checkChannel("Gadget") == 0){
         printf("Gadget Channel closed. \n");
-        system(wake_clear_cmd);
-		printf("\nclear ok\n");
+        //system(wake_clear_cmd);
+		//printf("\nclear ok\n");
         return;
     }
-	else{
-		printf("pair or clear or end(p c e):\n");
-		scanf("%s",(char *)&choose);
-	}	
-	
+	printf("\n+-------------------------------------------+\n");
+	printf("|             gadget running                  |\n");
+    printf("|        make sure setup gadget in lib        |\n");
+    printf("+---------------------------------------------+\n");
+	printf("enter p to start pair,c to unpair\n");
+	//scanf("%s",(char *)&choose);
+	input = getchar();
 	//pair mode
-	if(strcmp(choose,"p")==0){
-
+	if(input == 'p'){
+		closeotherChannel("Gadget");//close other channels
         system(wake_pair_cmd);
-		printf("\npair ok\n");
-		//printf("pair or clear or end(p c e):\n");
-		//scanf("%s",(char *)&choose);
-		//continue;
+		printf("\ngadget pair ok\n");	
+		//closeotherChannel("Gadget");//close other channels
 	}
 	
 	//clear mode
-	else if(strcmp(choose,"c")==0){
+	else if(input == 'c'){
 		system(wake_clear_cmd);
-		printf("\nclear ok\n");
-		//printf("pair or clear or end(p c e):\n");
-		//scanf("%s",(char *)&choose);
-		//continue;
+		printf("\ngadget unpair and clear ok\n");
+		break;//quit gadget loop
 	}
 	else{
-		printf("wrong input.pair or clear or end(p c e):\n");
-		//scanf("%s",(char *)&choose);
-		//continue;
+		printf("Gagdet wrong input.enter p to start pair,c to unpair\n");
 		}
-
 }
-	return ;
+	return;
 } 
 
