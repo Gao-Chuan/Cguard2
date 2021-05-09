@@ -2,6 +2,18 @@
 
 channel guard 2
 
+
+
+# GuardOn Version
+
+1. Combine four channels: AWS MQTT, Zigbee, Homekit, Amazon gadget.
+
+2. Run with Channel Guard and DMC Control APP.
+
+3. Ensure only one Channel controlling LED to protect the device.
+
+
+
 ## Lib
 
 ### Amazon MQTT
@@ -41,3 +53,4 @@ github：https://github.com/alexa/Alexa-Gadgets-Raspberry-Pi-Samples
 5. ./lib/Alexa-Gadgets-Raspberry-Pi-Samples clones from  https://github.com/alexa/Alexa-Gadgets-Raspberry-Pi-Samples。(master branch)
 
    First run ./Gadget may need  configure the environment of amazon gadget. (some automatic pip3 install)
+

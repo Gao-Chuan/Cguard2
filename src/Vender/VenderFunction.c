@@ -48,6 +48,7 @@ bool ReadDeviceStatus(void)
     return gLightBulbState;
 }
 
+//<wiringPi.h> and led test code
 /* <wiringPi.h> control led example  */
 // #include <wiringPi.h>
 // char LED = 15; 

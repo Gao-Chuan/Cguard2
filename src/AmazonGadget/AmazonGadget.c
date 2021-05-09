@@ -26,8 +26,8 @@ while(1){
 	// exit if this channel is not avaliable
     if (checkChannel("Gadget") == 0){
         printf("Gadget Channel closed. \n");
-        //system(wake_clear_cmd);
-		//printf("\nclear ok\n");
+		system(wake_clear_cmd);
+		printf("\ngadget unpair and clear ok\n");
         return;
     }
 	printf("\n+-------------------------------------------+\n");
@@ -39,6 +39,14 @@ while(1){
 	input = getchar();
 	//pair mode
 	if(input == 'p'){
+		
+		// exit if this channel is not avaliable
+		if (checkChannel("Gadget") == 0){
+			printf("Gadget Channel closed. \n");
+			system(wake_clear_cmd);
+			printf("\ngadget unpair and clear ok\n");
+			return;
+    }
 		closeotherChannel("Gadget");//close other channels
         system(wake_pair_cmd);
 		printf("\ngadget pair ok\n");	
