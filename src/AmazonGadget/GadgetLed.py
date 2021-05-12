@@ -39,6 +39,7 @@ class WakewordGadget(AlexaGadget):
         global led_state
         global led_lock
         VenerLed = VenderPy()
+        fo = open("gadget_led", "w+")#open file
 
         for state in directive.payload.states:
             if state.name == 'wakeword':
@@ -50,8 +51,13 @@ class WakewordGadget(AlexaGadget):
 
                             logger.info('Echo Wake word active - turn on LED')
                             led_state = 1
-                            VenerLed.OperateDevicePy(led_state)# led on and sleep(1)
+                            #VenerLed.OperateDevicePy(led_state)# led on and sleep(1)
+                            #gadget write file
+                            fo.write("1")#set file to 1
+                            fo.seek(0)
+                            fo.flush()#flush disk
                             
+
                             led_lock = 0#lock off
                             continue 
 
@@ -60,10 +66,16 @@ class WakewordGadget(AlexaGadget):
 
                             logger.info('Echo Wake word active - turn off LED')
                             led_state = 0
-                            VenerLed.OperateDevicePy(led_state)# led on and sleep(1)
+                            #VenerLed.OperateDevicePy(led_state)# led on and sleep(1)
+                            #gadget write file
+                            fo.write("0")#set file to 1
+                            fo.seek(0)
+                            fo.flush()#flush disk
                             
                             led_lock = 0#lock off
                             continue
+        
+        fo.close()#close fiule
 
 
 

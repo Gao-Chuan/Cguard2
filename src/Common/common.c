@@ -52,25 +52,22 @@ int initChannelList(char **channel_names, size_t channel_num){
 // Check the channel's availability. Return 1 if the channel is avaliable. Otherwise return 0.
 // If there's no such channel or the status is broken(not 1 or 0), return -1.
 int checkChannel(char *channel_name){
-    //In GuardOff version,only return 1
-    return 1;
-
-    // for (size_t i = 0; i < CHANNEL_LIST_LENGTH; i++){
-    //     printf("-%s-%s-", CHANNEL_LIST[i].channel_name, channel_name);
-    //     if(strncmp(CHANNEL_LIST[i].channel_name, channel_name, strlen(channel_name)) == 0){
-    //         if(CHANNEL_LIST[i].enabled == 1){
-    //             // return 1 if this channel is avaliable.
-    //             return 1;
-    //         } else if (CHANNEL_LIST[i].enabled == 0){
-    //             // return 0 if this channel is not avaliable.
-    //             return 0;
-    //         } else{
-    //             // raise an error.
-    //             return -1;
-    //         }
-    //     }
-    // }
-    // return -1;
+    for (size_t i = 0; i < CHANNEL_LIST_LENGTH; i++){
+        printf("-%s-%s-", CHANNEL_LIST[i].channel_name, channel_name);
+        if(strncmp(CHANNEL_LIST[i].channel_name, channel_name, strlen(channel_name)) == 0){
+            if(CHANNEL_LIST[i].enabled == 1){
+                // return 1 if this channel is avaliable.
+                return 1;
+            } else if (CHANNEL_LIST[i].enabled == 0){
+                // return 0 if this channel is not avaliable.
+                return 0;
+            } else{
+                // raise an error.
+                return -1;
+            }
+        }
+    }
+    return -1;
 }
 
 // Enable a channel. This function will only change the status of CHANNEL_LIST.
@@ -163,67 +160,61 @@ void doHAPAccessoryServerStop(void* _Nullable context, size_t contextSize) {
 
 int closeotherChannel(char *channel_name)
 {
-    //In GuardOff version,only return 1
+    for(int i = 0; i < CHANNEL_LIST_LENGTH; i++){
+        if(strncmp(CHANNEL_LIST[i].channel_name, channel_name, strlen(channel_name)) != 0){
+            CHANNEL_LIST[i].enabled = 0;
+            CHANNEL_LIST[i].channel_thread = 0;
+            if(strcmp(CHANNEL_LIST[i].channel_name, "homekit") == 0){
+                HAPError e = HAPPlatformRunLoopScheduleCallback(
+                doHAPAccessoryServerStop,
+                (void*) &gHAPaccessoryServer, 
+                sizeof(void*));
+                if (e != kHAPError_None) {
+                    //todo:error handle
+                    return -1;
+                } 
+                else
+                {
+                    printf("\nScheduled ServerStop\n");
+                    //gisHomeKitEnabled = false;
+                }
+                system("cd .HomeKitStore;rm -f 40.10 90.00 90.10 90.20 90.21");
+            }
+        }
+    }
+    printf("All other channels have been closed.\n");
     return 1;
-
-    // for(int i = 0; i < CHANNEL_LIST_LENGTH; i++){
-    //     if(strncmp(CHANNEL_LIST[i].channel_name, channel_name, strlen(channel_name)) != 0){
-    //         CHANNEL_LIST[i].enabled = 0;
-    //         CHANNEL_LIST[i].channel_thread = 0;
-    //         if(strcmp(CHANNEL_LIST[i].channel_name, "homekit") == 0){
-    //             HAPError e = HAPPlatformRunLoopScheduleCallback(
-    //             doHAPAccessoryServerStop,
-    //             (void*) &gHAPaccessoryServer, 
-    //             sizeof(void*));
-    //             if (e != kHAPError_None) {
-    //                 //todo:error handle
-    //                 return -1;
-    //             } 
-    //             else
-    //             {
-    //                 printf("\nScheduled ServerStop\n");
-    //                 //gisHomeKitEnabled = false;
-    //             }
-    //             system("cd .HomeKitStore;rm -f 40.10 90.00 90.10 90.20 90.21");
-    //         }
-    //     }
-    // }
-    // printf("All other channels have been closed.\n");
-    // return 1;
 }
 
 // Disable a channel. This function will only change the status of CHANNEL_LIST.
 // Return -1 if there's no such channel name. Otherwise return 0.
 int disableChannel(char *channel_name){
-    //In GuardOff version,only return 0
-    return 0;
-
-    // for (size_t i = 0; i < CHANNEL_LIST_LENGTH; i++){
-    //     if(strncmp(CHANNEL_LIST[i].channel_name, channel_name, strlen(channel_name)) == 0){
-    //         // set the channel status to False.
-    //         CHANNEL_LIST[i].enabled = 0;
-    //         // remove the thread address
-    //         CHANNEL_LIST[i].channel_thread = 0;
-    //         // close Homekit
-    //         if(strcmp(channel_name, "homekit") == 0){
-    //             HAPError e = HAPPlatformRunLoopScheduleCallback(
-    //                     doHAPAccessoryServerStop,
-    //                     (void*) &gHAPaccessoryServer, 
-    //                     sizeof(void*));
-    //             if (e != kHAPError_None) {
-    //                 //todo:error handle
-    //                 return -1;
-    //             } else
-    //             {
-    //                 printf("\nScheduled ServerStop\n");
-    //                 //gisHomeKitEnabled = false;
-    //             }
-    //             system("cd .HomeKitStore;rm -f 40.10 90.00 90.10 90.20 90.21 A0.00");
-    //         }
-    //         return 0;
-    //     }
-    // }
-    // return -1;
+    for (size_t i = 0; i < CHANNEL_LIST_LENGTH; i++){
+        if(strncmp(CHANNEL_LIST[i].channel_name, channel_name, strlen(channel_name)) == 0){
+            // set the channel status to False.
+            CHANNEL_LIST[i].enabled = 0;
+            // remove the thread address
+            CHANNEL_LIST[i].channel_thread = 0;
+            // close Homekit
+            if(strcmp(channel_name, "homekit") == 0){
+                HAPError e = HAPPlatformRunLoopScheduleCallback(
+                        doHAPAccessoryServerStop,
+                        (void*) &gHAPaccessoryServer, 
+                        sizeof(void*));
+                if (e != kHAPError_None) {
+                    //todo:error handle
+                    return -1;
+                } else
+                {
+                    printf("\nScheduled ServerStop\n");
+                    //gisHomeKitEnabled = false;
+                }
+                system("cd .HomeKitStore;rm -f 40.10 90.00 90.10 90.20 90.21 A0.00");
+            }
+            return 0;
+        }
+    }
+    return -1;
 }
 
 int PrepareNewSetupCode(void)
