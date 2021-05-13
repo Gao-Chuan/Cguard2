@@ -12,7 +12,13 @@ channel guard 2
 
 
 
-gadget-fix “p” enter
+> gadget-fix “p” enter
+
+> before using Gadget channel，make sure that you run：
+>
+> sudo python3 ./lib/Alexa-Gadgets-Raspberry-Pi-Samples/launch.py  --setup
+>
+> to install  for Alexa Gadget
 
 # GuardOff Version
 
