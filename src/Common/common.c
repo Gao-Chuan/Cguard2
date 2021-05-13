@@ -2,12 +2,14 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include "common.h"
 #include "amazonMQTT.h"
 #include "HAP.h"
 #include "homekit.h"
 #include "HAPAccessorySetup.h"
+
 
 // First run flag
 int FIRST_RUN = 1;

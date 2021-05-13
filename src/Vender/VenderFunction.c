@@ -8,6 +8,7 @@ int operatrtime =0;
 
 void OperateDevice(bool value,char* channel)
 {   
+ 
     operatrtime = operatrtime +1;
     printf("it is the %d time to operate device", operatrtime);
     if (operatrtime == 1)
