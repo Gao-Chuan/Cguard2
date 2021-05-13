@@ -8,13 +8,6 @@ int operatrtime =0;
 
 void OperateDevice(bool value,char* channel)
 {   
-    struct timeval tv;
-    gettimeofday(&tv,NULL);
-    printf("second: %ld\n", tv.tv_sec); // 秒
-    printf("second2:%ld\n",tv.tv_usec );  //毫秒
-
-
-    
     operatrtime = operatrtime +1;
     printf("it is the %d time to operate device", operatrtime);
     if (operatrtime == 1)

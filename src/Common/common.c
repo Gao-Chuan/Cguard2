@@ -175,6 +175,7 @@ int closeotherChannel(char *channel_name)
         if(strncmp(CHANNEL_LIST[i].channel_name, channel_name, strlen(channel_name)) != 0){
             CHANNEL_LIST[i].enabled = 0;
             CHANNEL_LIST[i].channel_thread = 0;
+            
             if(strcmp(CHANNEL_LIST[i].channel_name, "homekit") == 0){ 
                 HAPError e = HAPPlatformRunLoopScheduleCallback(
                         doHAPAccessoryServerStop,
