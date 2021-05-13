@@ -3,10 +3,19 @@
 #include "VendorFunction.h"
 #include "common.h"
 #include <wiringPi.h>
+#include <sys/time.h>
 int operatrtime =0;
 
 void OperateDevice(bool value,char* channel)
-{   operatrtime = operatrtime +1;
+{   
+    struct timeval tv;
+    gettimeofday(&tv,NULL);
+    printf("second: %ld\n", tv.tv_sec); // 秒
+    printf("second2:%ld\n",tv.tv_usec );  //毫秒
+
+
+    
+    operatrtime = operatrtime +1;
     printf("it is the %d time to operate device", operatrtime);
     if (operatrtime == 1)
     {

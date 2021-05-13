@@ -158,15 +158,55 @@ void doHAPAccessoryServerStop(void* _Nullable context, size_t contextSize) {
     }
 }
 
+void doHAPRunloopStop(void* _Nullable context, size_t contextSize) {
+    if (context) {
+        sleep(20);
+        HAPPlatformRunLoopStop();
+        printf("\nStart stoping the runloop!\n");
+    } else
+    {
+        printf("\nIn Homekit close function. Context is NULL!\n");
+    }
+}
+
 int closeotherChannel(char *channel_name)
 {
     for(int i = 0; i < CHANNEL_LIST_LENGTH; i++){
         if(strncmp(CHANNEL_LIST[i].channel_name, channel_name, strlen(channel_name)) != 0){
             CHANNEL_LIST[i].enabled = 0;
             CHANNEL_LIST[i].channel_thread = 0;
-            if(strcmp(CHANNEL_LIST[i].channel_name, "homekit") == 0){
+            if(strcmp(CHANNEL_LIST[i].channel_name, "homekit") == 0){ 
+                HAPError e = HAPPlatformRunLoopScheduleCallback(
+                        doHAPAccessoryServerStop,
+                        (void*) &gHAPaccessoryServer, 
+                        sizeof(void*));
+                if (e != kHAPError_None) {
+                    //todo:error handle
+                    return -1;
+                } else
+                {
+                    printf("\nScheduled ServerStop\n");
+                    //gisHomeKitEnabled = false;
+                }
+                e = HAPPlatformRunLoopScheduleCallback(
+                        doHAPRunloopStop,
+                        (void*) &gHAPaccessoryServer, 
+                        sizeof(void*));
+                if (e != kHAPError_None) {
+                    //todo:error handle
+                    return -1;
+                } else
+                {
+                    printf("\nScheduled RunloopStop\n");
+                    //gisHomeKitEnabled = false;
+                }
+                /*
                 HAPError e = HAPPlatformRunLoopScheduleCallback(
                 doHAPAccessoryServerStop,
+                (void*) &gHAPaccessoryServer, 
+                sizeof(void*));
+                e = HAPPlatformRunLoopScheduleCallback(
+                doHAPAccessoryServerStop2,
                 (void*) &gHAPaccessoryServer, 
                 sizeof(void*));
                 if (e != kHAPError_None) {
@@ -177,7 +217,8 @@ int closeotherChannel(char *channel_name)
                 {
                     printf("\nScheduled ServerStop\n");
                     //gisHomeKitEnabled = false;
-                }
+                }*/
+
                 system("cd .HomeKitStore;rm -f 40.10 90.00 90.10 90.20 90.21");
             }
         }
@@ -209,6 +250,20 @@ int disableChannel(char *channel_name){
                     printf("\nScheduled ServerStop\n");
                     //gisHomeKitEnabled = false;
                 }
+                e = HAPPlatformRunLoopScheduleCallback(
+                        doHAPRunloopStop,
+                        (void*) &gHAPaccessoryServer, 
+                        sizeof(void*));
+                if (e != kHAPError_None) {
+                    //todo:error handle
+                    return -1;
+                } else
+                {
+                    printf("\nScheduled RunloopStop\n");
+                    //gisHomeKitEnabled = false;
+                }
+
+
                 system("cd .HomeKitStore;rm -f 40.10 90.00 90.10 90.20 90.21 A0.00");
             }
             return 0;
