@@ -64,7 +64,7 @@ void runGadget(void){
 
 		if(gadget_led_status != temp_status){
 			if(gadget_led_status == 0 || gadget_led_status == 1){
-				OperateDevice(intToBool(gadget_led_status),"Gadget");
+				OperateDevice(intToBool(gadget_led_status));
 				printf("\n****Gadget Set light status to %d ****\n", gadget_led_status);
 				temp_status = gadget_led_status;//update temp_status
 			}

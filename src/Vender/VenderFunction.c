@@ -9,7 +9,7 @@
 #include <wiringPi.h>
 
 
-void OperateDevice(bool value,char* channel_name)
+void OperateDevice(bool value)
 {   
     //led init
     char LED = 4;// <wiringPi.h> gpio23 Eighth on the upper right

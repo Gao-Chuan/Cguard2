@@ -36,10 +36,10 @@ void iot_subscribe_callback_handler(AWS_IoT_Client *pClient, char *topicName, ui
 
     switch(cmd) {
         case 't':
-			OperateDevice(true,"amazon_MQTT");
+			OperateDevice(true);
             break;
         case 'f':
-			OperateDevice(false,"amazon_MQTT");
+			OperateDevice(false);
             break;
         case 'q':
             pthread_mutex_lock(&gMutexLightBulb);

@@ -27,11 +27,11 @@ void runZigbee(void){
 		{
 			case 235:   //on-n
 			  printf("received command:>>n---turn on the light");
-			  OperateDevice(true,"Zigbee");
+			  OperateDevice(true);
 			  break;
 			case 233:   //off-f
 			  printf("received command:>>f---turn off the light");
-			  OperateDevice(false,"Zigbee");
+			  OperateDevice(false);
 			  break;
 			case 236:  //query-q
 			  printf("received command:>>q---check the staus of light");
