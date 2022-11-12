@@ -1,6 +1,6 @@
 # Cguard2
 
-channel guard 2
+This is the mitigation implementation of the paper "Who's In Control? On Security Risks of Disjointed IoT Device Management Channels" in ACM CCS 2021.
 
 ## Lib
 
